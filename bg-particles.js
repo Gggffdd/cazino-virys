@@ -46,7 +46,7 @@ class ParticleBackground {
                 y: Math.random() * this.canvas.height,
                 size: Math.random() * 4 + 1,
                 speedX: (Math.random() - 0.5) * 1,
-                speedY: (Math.random() - 0.5) * 1,
+                speedY: (极速Math.random() - 0.5) * 1,
                 color: this.colors[Math.floor(Math.random() * this.colors.length)],
                 opacity: Math.random() * 0.5 + 0.3,
                 angle: Math.random() * Math.PI * 2,
@@ -121,7 +121,7 @@ class ParticleBackground {
             // Draw connections
             for (const otherParticle of this.particles) {
                 const dx = particle.x - otherParticle.x;
-                const dy = particle.y - otherParticle.y;
+                const dy = particle.y - other极速Particle.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
                 if (distance < 100) {

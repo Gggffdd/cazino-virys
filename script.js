@@ -14,6 +14,7 @@ class ModernSlotMachine {
         this.quickSpin = false;
         this.turboMode = false;
         this.gameHistory = [];
+        this.isInitialized = false;
         
         this.symbols = [
             '💎', '💰', '₿', '👑', '7️⃣', '❤️', '⭐', '🔔',
@@ -56,10 +57,40 @@ class ModernSlotMachine {
         this.updateDisplay();
         this.setupEventListeners();
         this.initializeParticles();
-        this.hidePreloader();
+        this.animatePreloader();
         
         // Initialize settings
         this.setVolume(80);
+        this.isInitialized = true;
+    }
+
+    animatePreloader() {
+        const progressBar = document.getElementById('preloaderProgress');
+        let progress = 0;
+        
+        const interval = setInterval(() => {
+            progress += Math.random() * 10;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                setTimeout(() => this.hidePreloader(), 500);
+            }
+            progressBar.style.width = progress + '%';
+        }, 100);
+    }
+
+    hidePreloader() {
+        const preloader = document.getElementById('preloader');
+        const container = document.querySelector('.container');
+        
+        preloader.style.opacity = '0';
+        preloader.style.transition = 'opacity 0.5s ease';
+        
+        setTimeout(() => {
+            preloader.style.display = 'none';
+            container.style.opacity = '1';
+            container.classList.add('loaded');
+        }, 500);
     }
 
     createReels() {
@@ -146,7 +177,7 @@ class ModernSlotMachine {
     }
 
     async startSpin() {
-        if (this.isSpinning) return;
+        if (this.isSpinning || !this.isInitialized) return;
         
         // Check if we have free spins
         if (this.freeSpins > 0) {
@@ -224,13 +255,16 @@ class ModernSlotMachine {
     async animateReels() {
         const reels = document.querySelectorAll('.reel');
         const spinDuration = this.quickSpin ? 1000 : 2000;
-        const reelDelay = 150; // Delay between each reel starting
+        const reelDelay = 150;
         
         // Reset reels to top position
         reels.forEach(reel => {
             reel.style.transition = 'none';
             reel.style.transform = 'translateY(0)';
         });
+        
+        // Force reflow
+        reels[0].offsetHeight;
         
         // Animate each reel with a slight delay between them
         const animations = [];
@@ -241,8 +275,8 @@ class ModernSlotMachine {
                     const reel = reels[i];
                     reel.style.transition = `transform ${spinDuration}ms cubic-bezier(0.33, 0, 0.67, 1)`;
                     
-                    // Calculate random stopping position (multiple of symbol height)
-                    const symbolHeight = 25; // Approximate height of a symbol in pixels
+                    // Calculate random stopping position
+                    const symbolHeight = 25;
                     const randomOffset = -(Math.floor(Math.random() * 10) + 15) * symbolHeight;
                     
                     reel.style.transform = `translateY(${randomOffset}px)`;
@@ -268,8 +302,8 @@ class ModernSlotMachine {
             this.currentGrid[row] = [];
             for (let col = 0; col < 5; col++) {
                 const reel = reels[col];
-                // Get the symbol at the visible position (rows 4-7 in the reel strip)
-                const symbolIndex = 8 + row; // Middle of the reel strip
+                // Get the symbol at the visible position
+                const symbolIndex = 8 + row;
                 const symbolElement = reel.children[symbolIndex];
                 const symbol = symbolElement.textContent;
                 
@@ -289,9 +323,6 @@ class ModernSlotMachine {
     }
 
     generateNewGrid() {
-        // For the reel implementation, we don't need to regenerate the entire grid
-        // The reel animation already positions symbols correctly
-        // This method is kept for compatibility with the win checking logic
         this.updateCurrentGrid();
     }
 
@@ -425,11 +456,14 @@ class ModernSlotMachine {
             const [row, col] = cellId.split('-').map(Number);
             const reel = reels[col];
             // Get the symbol at the visible position
-            const symbolIndex = 8 + row; // Middle of the reel strip
+            const symbolIndex = 8 + row;
             const symbolElement = reel.children[symbolIndex];
             
             if (symbolElement) {
                 symbolElement.classList.add('win');
+                
+                // Add animation delay based on column for sequential effect
+                symbolElement.style.animationDelay = `${col * 0.1}s`;
             }
         }
     }
@@ -492,6 +526,11 @@ class ModernSlotMachine {
         
         countElement.textContent = this.freeSpins;
         indicator.classList.add('show');
+        
+        // Auto hide after 3 seconds
+        setTimeout(() => {
+            indicator.classList.remove('show');
+        }, 3000);
     }
 
     updateFreeSpinsDisplay() {
@@ -745,19 +784,6 @@ class ModernSlotMachine {
         
         setTimeout(() => {
             document.body.removeChild(messageEl);
-        }, 2000);
-    }
-
-    hidePreloader() {
-        const preloader = document.getElementById('preloader');
-        const container = document.querySelector('.container');
-        
-        setTimeout(() => {
-            preloader.style.opacity = '0';
-            setTimeout(() => {
-                preloader.style.display = 'none';
-                container.classList.add('loaded');
-            }, 500);
         }, 2000);
     }
 

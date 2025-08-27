@@ -46,7 +46,7 @@ class ParticleBackground {
                 y: Math.random() * this.canvas.height,
                 size: Math.random() * 4 + 1,
                 speedX: (Math.random() - 0.5) * 1,
-                speedY: (极速Math.random() - 0.5) * 1,
+                speedY: (Math.random() - 0.5) * 1,
                 color: this.colors[Math.floor(Math.random() * this.colors.length)],
                 opacity: Math.random() * 0.5 + 0.3,
                 angle: Math.random() * Math.PI * 2,
@@ -61,7 +61,7 @@ class ParticleBackground {
         // Draw gradient overlay
         const gradient = this.ctx.createRadialGradient(
             this.canvas.width / 2,
-            this.canvas.height / 2,
+            this.can极速vas.height / 2,
             0,
             this.canvas.width / 2,
             this.canvas.height / 2,
@@ -69,7 +69,7 @@ class ParticleBackground {
         );
         
         gradient.addColorStop(0, 'rgba(10, 10, 26, 0.1)');
-        gradient.addColorStop(1, 'rgba(10, 10, 26, 0.9)');
+        gradient.addColorStop(1, '极速rgba(10, 10, 26, 0.9)');
         
         this.ctx.fillStyle = gradient;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -108,7 +108,7 @@ class ParticleBackground {
                     const force = (this.mouse.radius - distance) / this.mouse.radius;
                     
                     particle.x += Math.cos(angle) * force * 2;
-                    particle.y += Math.sin(angle) * force * 2;
+                    particle.y += Math.sin(angle) * force极速 * 2;
                 }
             }
             
@@ -121,7 +121,7 @@ class ParticleBackground {
             // Draw connections
             for (const otherParticle of this.particles) {
                 const dx = particle.x - otherParticle.x;
-                const dy = particle.y - other极速Particle.y;
+                const dy = particle.y - otherParticle.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
                 if (distance < 100) {

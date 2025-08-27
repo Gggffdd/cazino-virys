@@ -87,12 +87,15 @@ body {
 }
 
 .container {
-    max-width: 480px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 15px;
     position: relative;
     opacity: 0;
     transition: opacity 0.5s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .container.loaded {
@@ -190,13 +193,17 @@ body {
 
 /* Game Container */
 .game-container {
+    display: flex;
+    gap: 20px;
     margin-bottom: 20px;
+    flex: 1;
 }
 
 /* Slot Machine */
 .slot-machine {
     position: relative;
-    margin-bottom: 20px;
+    flex: 1;
+    display: flex;
 }
 
 .slot-frame {
@@ -205,6 +212,9 @@ body {
     padding: 15px;
     border: 2px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .slot-top, .slot-bottom {
@@ -243,17 +253,54 @@ body {
     overflow: hidden;
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    flex: 1;
+    display: flex;
 }
 
-/* Slot Grid 5x4 */
-.slot-grid {
+/* Slot Reels */
+.slot-reels {
     position: relative;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(4, 1fr);
+    display: flex;
+    flex: 1;
     gap: 5px;
-    aspect-ratio: 5/4;
     padding: 10px;
+}
+
+.reel {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #1a1a3a, #2d2d5a);
+}
+
+.reel-symbol {
+    height: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2em;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.reel-symbol.win {
+    animation: winFlash 0.5s ease-in-out 3;
+    border-color: var(--neon-green);
+    box-shadow: 0 0 20px var(--neon-green);
+    z-index: 3;
+}
+
+.reel-symbol.wild {
+    background: linear-gradient(145deg, #ff2d95, #c96dff);
+}
+
+.reel-symbol.scatter {
+    background: linear-gradient(145deg, #00f3ff, #00ff9d);
+}
+
+.reel-symbol.bonus {
+    background: linear-gradient(145deg, #ffd700, #ff6b00);
 }
 
 .reel-overlay {
@@ -268,50 +315,155 @@ body {
     z-index: 2;
 }
 
-.grid-cell {
+/* Right Controls */
+.right-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 120px;
+}
+
+/* Lever Styles */
+.lever-container {
     position: relative;
-    background: linear-gradient(145deg, #1a1a3a, #2d2d5a);
-    border-radius: 8px;
-    overflow: hidden;
+    width: 60px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.lever-base {
+    width: 40px;
+    height: 20px;
+    background: linear-gradient(145deg, #555, #333);
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.lever-handle {
+    position: relative;
+    width: 30px;
+    height: 160px;
+    transform-origin: top center;
+    transition: transform 0.5s ease;
+}
+
+.lever-grip {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(145deg, var(--neon-orange), var(--neon-yellow));
+    border-radius: 50%;
+    box-shadow: 0 0 20px var(--neon-orange);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.2em;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    z-index: 1;
+    color: var(--darker-bg);
+    font-size: 1.5em;
 }
 
-.grid-cell::before {
+.lever-grip::after {
     content: '';
     position: absolute;
-    inset: 0;
-    background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
 }
 
-.grid-cell.spinning {
-    animation: symbolSpin 0.5s infinite linear;
+.lever-handle::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 120px;
+    background: linear-gradient(to bottom, #888, #666);
+    border-radius: 5px;
 }
 
-.grid-cell.win {
-    animation: winFlash 0.5s ease-in-out 3;
-    border-color: var(--neon-green);
-    box-shadow: 0 0 20px var(--neon-green);
-    z-index: 3;
+.lever-shadow {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    filter: blur(5px);
 }
 
-.grid-cell.wild {
-    background: linear-gradient(145deg, #ff2d95, #c96dff);
+/* Big Spin Button */
+.spin-btn-big {
+    width: 100px;
+    height: 100px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--neon-green), var(--neon-blue));
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 30px var(--neon-green);
 }
 
-.grid-cell.scatter {
-    background: linear-gradient(145deg, #00f3ff, #00ff9d);
+.spin-btn-big::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: rotate(45deg);
+    transition: all 0.5s ease;
 }
 
-.grid-cell.bonus {
-    background: linear-gradient(145deg, #ffd700, #ff6b00);
+.spin-btn-big:hover::before {
+    animation: shine 1.5s ease infinite;
+}
+
+.spin-btn-big:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px var(--neon-green);
+}
+
+.spin-btn-big:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: linear-gradient(145deg, #555, #777);
+    box-shadow: none;
+}
+
+.spin-inner-big {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.spin-text-big {
+    display: block;
+    font-size: 1.3em;
+    margin-bottom: 5px;
+}
+
+.spin-price-big {
+    font-size: 0.9em;
+    opacity: 0.9;
 }
 
 /* Control Panel */
@@ -471,80 +623,10 @@ body {
     background: var(--neon-pink);
 }
 
-.spin-btn {
+.max-bet {
     flex: 1;
-    padding: 0;
-    border: none;
-    border-radius: 20px;
-    background: linear-gradient(145deg, var(--neon-green), var(--neon-blue));
-    color: white;
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    height: 70px;
-}
-
-.spin-btn::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-    transform: rotate(45deg);
-    transition: all 0.5s ease;
-}
-
-.spin-btn:hover::before {
-    animation: shine 1.5s ease infinite;
-}
-
-.spin-btn:hover:not(:disabled) {
-    transform: scale(1.05);
-    box-shadow: 0 0 30px var(--neon-green);
-}
-
-.spin-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    background: linear-gradient(145deg, #555, #777);
-}
-
-.spin-inner {
-    padding: 15px 20px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-}
-
-.spin-text {
-    display: block;
-    font-size: 1.3em;
-    margin-bottom: 5px;
-}
-
-.spin-price {
-    font-size: 0.9em;
-    opacity: 0.9;
-}
-
-.spin-arrow {
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border-left: 10px solid white;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    opacity: 0.8;
+    justify-content: flex-end;
 }
 
 .max-btn {
@@ -1152,6 +1234,13 @@ input:checked + .slider:before {
     box-shadow: 0 0 20px var(--neon-green);
 }
 
+/* Confetti */
+.confetti {
+    position: absolute;
+    border-radius: 50%;
+    animation: confetti 3s ease-in-out forwards;
+}
+
 /* Animations */
 @keyframes glow {
     0% { 
@@ -1191,26 +1280,6 @@ input:checked + .slider:before {
     }
 }
 
-@keyframes symbolFall {
-    0% { 
-        transform: translateY(-100%);
-        opacity: 0;
-    }
-    100% { 
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes symbolSpin {
-    0% { 
-        transform: rotateX(0deg);
-    }
-    100% { 
-        transform: rotateX(360deg);
-    }
-}
-
 @keyframes confetti {
     0% {
         transform: translateY(0) rotate(0deg);
@@ -1223,6 +1292,37 @@ input:checked + .slider:before {
 }
 
 /* Responsive Design */
+@media (max-width: 768px) {
+    .game-container {
+        flex-direction: column;
+    }
+    
+    .right-controls {
+        flex-direction: row;
+        width: 100%;
+        margin-top: 20px;
+        justify-content: space-around;
+    }
+    
+    .lever-container {
+        width: 50px;
+        height: 150px;
+    }
+    
+    .lever-handle {
+        height: 130px;
+    }
+    
+    .lever-handle::before {
+        height: 100px;
+    }
+    
+    .spin-btn-big {
+        width: 80px;
+        height: 80px;
+    }
+}
+
 @media (max-width: 480px) {
     .container {
         padding: 10px;
@@ -1238,7 +1338,7 @@ input:checked + .slider:before {
         justify-content: center;
     }
     
-    .grid-cell {
+    .reel-symbol {
         font-size: 1.8em;
     }
     
@@ -1270,6 +1370,11 @@ input:checked + .slider:before {
     
     .win-multiplier {
         font-size: 2.5em;
+    }
+    
+    .right-controls {
+        flex-direction: column;
+        gap: 15px;
     }
 }
 

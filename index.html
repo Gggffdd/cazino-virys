@@ -3,112 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Mini App Demo</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: white;
-        }
-        
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 30px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-        
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .status {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            text-align: center;
-            font-size: 1.2em;
-        }
-        
-        .success {
-            color: #00ff88;
-            font-weight: bold;
-            font-size: 1.5em;
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-        
-        .feature {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-        }
-        
-        .icon {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-    </style>
+    <title>Casino Slot | Telegram</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>🚀 Telegram Mini App</h1>
-        
-        <div class="status">
-            <p>Статус приложения:</p>
-            <p class="success">✅ ВСЕ РАБОТАЕТ!</p>
+        <div class="header">
+            <h1>🎰 CASINO ROYALE</h1>
+            <div class="balance">Баланс: <span id="balance">1000</span> ₽</div>
         </div>
-        
-        <div class="features">
-            <div class="feature">
-                <div class="icon">📱</div>
-                <h3>Адаптивный дизайн</h3>
-                <p>Отлично выглядит на всех устройствах</p>
+
+        <div class="slot-machine">
+            <div class="reels-container">
+                <div class="reel" id="reel1">
+                    <div class="symbol">🍒</div>
+                    <div class="symbol">🍋</div>
+                    <div class="symbol">🍊</div>
+                    <div class="symbol">🍇</div>
+                    <div class="symbol">🍉</div>
+                    <div class="symbol">7️⃣</div>
+                </div>
+                <div class="reel" id="reel2">
+                    <div class="symbol">🍋</div>
+                    <div class="symbol">🍊</div>
+                    <div class="symbol">🍇</div>
+                    <div class="symbol">🍉</div>
+                    <div class="symbol">7️⃣</div>
+                    <div class="symbol">🍒</div>
+                </div>
+                <div class="reel" id="reel3">
+                    <div class="symbol">🍊</div>
+                    <div class="symbol">🍇</div>
+                    <div class="symbol">🍉</div>
+                    <div class="symbol">7️⃣</div>
+                    <div class="symbol">🍒</div>
+                    <div class="symbol">🍋</div>
+                </div>
             </div>
-            
-            <div class="feature">
-                <div class="icon">⚡</div>
-                <h3>Высокая скорость</h3>
-                <p>Быстрая загрузка и плавная работа</p>
-            </div>
-            
-            <div class="feature">
-                <div class="icon">🔧</div>
-                <h3>Простая настройка</h3>
-                <p>Легко развернуть на Netlify</p>
+
+            <div class="payline"></div>
+
+            <div class="controls">
+                <div class="bet-controls">
+                    <button class="bet-btn" onclick="changeBet(-10)">-10</button>
+                    <span class="bet-amount">Ставка: <span id="bet">50</span> ₽</span>
+                    <button class="bet-btn" onclick="changeBet(10)">+10</button>
+                </div>
+                
+                <button class="spin-btn" id="spinBtn" onclick="startSpin()">
+                    🎯 КРУТИТЬ
+                </button>
             </div>
         </div>
+
+        <div class="paytable">
+            <h3>Выигрыши:</h3>
+            <div class="paytable-item">7️⃣7️⃣7️⃣ = x10 ставки</div>
+            <div class="paytable-item">🍒🍒🍒 = x5 ставки</div>
+            <div class="paytable-item">🍇🍇🍇 = x4 ставки</div>
+            <div class="paytable-item">🍉🍉🍉 = x3 ставки</div>
+            <div class="paytable-item">🍊🍊🍊 = x2 ставки</div>
+            <div class="paytable-item">🍋🍋🍋 = x2 ставки</div>
+        </div>
+
+        <div class="win-message" id="winMessage"></div>
     </div>
 
-    <script>
-        console.log('✅ Приложение успешно загружено!');
-        console.log('🚀 Готово к использованию в Telegram Mini App');
-        
-        // Простая анимация для демонстрации
-        document.addEventListener('DOMContentLoaded', function() {
-            const elements = document.querySelectorAll('.feature');
-            elements.forEach((el, index) => {
-                setTimeout(() => {
-                    el.style.opacity = '1';
-                    el.style.transform = 'translateY(0)';
-                }, index * 200);
-            });
-        });
-    </script>
+    <audio id="spinSound" src="sounds/spin.mp3" preload="auto"></audio>
+    <audio id="winSound" src="sounds/win.mp3" preload="auto"></audio>
+    <audio id="reelSound" src="sounds/reel-stop.mp3" preload="auto"></audio>
+
+    <script src="script.js"></script>
 </body>
 </html>

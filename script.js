@@ -52,7 +52,7 @@ class ModernSlotMachine {
     }
 
     initialize() {
-        this.createGrid();
+        this.createReels();
         this.updateDisplay();
         this.setupEventListeners();
         this.initializeParticles();
@@ -62,31 +62,35 @@ class ModernSlotMachine {
         this.setVolume(80);
     }
 
-    createGrid() {
-        const grid = document.getElementById('slotGrid');
-        grid.innerHTML = '';
+    createReels() {
+        const reelsContainer = document.getElementById('slotReels');
+        reelsContainer.innerHTML = '';
         
-        for (let row = 0; row < 4; row++) {
-            for (let col = 0; col < 5; col++) {
-                const cell = document.createElement('div');
-                cell.className = 'grid-cell';
-                cell.dataset.row = row;
-                cell.dataset.col = col;
-                
+        for (let col = 0; col < 5; col++) {
+            const reel = document.createElement('div');
+            reel.className = 'reel';
+            reel.dataset.reel = col;
+            
+            // Create reel strip with more symbols for smooth scrolling
+            for (let i = 0; i < 20; i++) {
+                const symbol = document.createElement('div');
+                symbol.className = 'reel-symbol';
                 const randomSymbol = this.getRandomSymbol();
-                cell.textContent = randomSymbol;
-                cell.dataset.symbol = randomSymbol;
+                symbol.textContent = randomSymbol;
+                symbol.dataset.symbol = randomSymbol;
                 
                 if (this.symbolTypes[randomSymbol] === 'wild') {
-                    cell.classList.add('wild');
+                    symbol.classList.add('wild');
                 } else if (this.symbolTypes[randomSymbol] === 'scatter') {
-                    cell.classList.add('scatter');
+                    symbol.classList.add('scatter');
                 } else if (this.symbolTypes[randomSymbol] === 'bonus') {
-                    cell.classList.add('bonus');
+                    symbol.classList.add('bonus');
                 }
                 
-                grid.appendChild(cell);
+                reel.appendChild(symbol);
             }
+            
+            reelsContainer.appendChild(reel);
         }
     }
 
@@ -161,11 +165,20 @@ class ModernSlotMachine {
         this.isSpinning = true;
         this.updateDisplay();
         
+        // Play lever sound
+        this.playSound('leverSound');
+        
+        // Animate lever
+        this.pullLever();
+        
+        // Wait a moment before starting reels
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
         // Play spin sound
         this.playSound('spinSound');
         
         // Animate spin
-        await this.animateSpin();
+        await this.animateReels();
         
         // Generate new grid
         this.generateNewGrid();
@@ -197,67 +210,89 @@ class ModernSlotMachine {
         }
     }
 
-    async animateSpin() {
-        const cells = document.querySelectorAll('.grid-cell');
-        const spinDuration = this.quickSpin ? 1000 : 2000;
-        const startTime = Date.now();
+    pullLever() {
+        const lever = document.getElementById('leverHandle');
+        lever.style.transition = 'transform 0.3s ease';
+        lever.style.transform = 'translateY(20px) rotate(15deg)';
         
-        // Add spinning class to cells
-        cells.forEach(cell => {
-            cell.classList.add('spinning');
-        });
-        
-        // Fast spin phase
-        while (Date.now() - startTime < spinDuration) {
-            for (const cell of cells) {
-                if (Math.random() < 0.3) {
-                    cell.textContent = this.getRandomSymbol();
-                }
-            }
-            await new Promise(resolve => setTimeout(resolve, 50));
-        }
-        
-        // Slow down phase
-        for (let i = 0; i < 5; i++) {
-            for (const cell of cells) {
-                if (Math.random() < 0.2) {
-                    cell.textContent = this.getRandomSymbol();
-                }
-            }
-            await new Promise(resolve => setTimeout(resolve, 100));
-        }
-        
-        // Remove spinning class
-        cells.forEach(cell => {
-            cell.classList.remove('spinning');
-        });
+        setTimeout(() => {
+            lever.style.transition = 'transform 0.5s ease';
+            lever.style.transform = 'translateY(0) rotate(0)';
+        }, 300);
     }
 
-    generateNewGrid() {
-        const cells = document.querySelectorAll('.grid-cell');
+    async animateReels() {
+        const reels = document.querySelectorAll('.reel');
+        const spinDuration = this.quickSpin ? 1000 : 2000;
+        const reelDelay = 150; // Delay between each reel starting
+        
+        // Reset reels to top position
+        reels.forEach(reel => {
+            reel.style.transition = 'none';
+            reel.style.transform = 'translateY(0)';
+        });
+        
+        // Animate each reel with a slight delay between them
+        const animations = [];
+        
+        for (let i = 0; i < reels.length; i++) {
+            animations.push(new Promise(resolve => {
+                setTimeout(() => {
+                    const reel = reels[i];
+                    reel.style.transition = `transform ${spinDuration}ms cubic-bezier(0.33, 0, 0.67, 1)`;
+                    
+                    // Calculate random stopping position (multiple of symbol height)
+                    const symbolHeight = 25; // Approximate height of a symbol in pixels
+                    const randomOffset = -(Math.floor(Math.random() * 10) + 15) * symbolHeight;
+                    
+                    reel.style.transform = `translateY(${randomOffset}px)`;
+                    
+                    // Resolve when animation completes
+                    setTimeout(resolve, spinDuration);
+                }, i * reelDelay);
+            }));
+        }
+        
+        // Wait for all reels to finish
+        await Promise.all(animations);
+        
+        // Update current grid with final positions
+        this.updateCurrentGrid();
+    }
+
+    updateCurrentGrid() {
         this.currentGrid = [];
+        const reels = document.querySelectorAll('.reel');
         
         for (let row = 0; row < 4; row++) {
             this.currentGrid[row] = [];
             for (let col = 0; col < 5; col++) {
-                const cell = cells[row * 5 + col];
-                const symbol = this.getRandomSymbol();
-                
-                cell.textContent = symbol;
-                cell.dataset.symbol = symbol;
-                
-                cell.classList.remove('wild', 'scatter', 'bonus', 'win');
-                if (this.symbolTypes[symbol] === 'wild') {
-                    cell.classList.add('wild');
-                } else if (this.symbolTypes[symbol] === 'scatter') {
-                    cell.classList.add('scatter');
-                } else if (this.symbolTypes[symbol] === 'bonus') {
-                    cell.classList.add('bonus');
-                }
+                const reel = reels[col];
+                // Get the symbol at the visible position (rows 4-7 in the reel strip)
+                const symbolIndex = 8 + row; // Middle of the reel strip
+                const symbolElement = reel.children[symbolIndex];
+                const symbol = symbolElement.textContent;
                 
                 this.currentGrid[row][col] = symbol;
+                
+                // Update classes for styling
+                symbolElement.classList.remove('wild', 'scatter', 'bonus', 'win');
+                if (this.symbolTypes[symbol] === 'wild') {
+                    symbolElement.classList.add('wild');
+                } else if (this.symbolTypes[symbol] === 'scatter') {
+                    symbolElement.classList.add('scatter');
+                } else if (this.symbolTypes[symbol] === 'bonus') {
+                    symbolElement.classList.add('bonus');
+                }
             }
         }
+    }
+
+    generateNewGrid() {
+        // For the reel implementation, we don't need to regenerate the entire grid
+        // The reel animation already positions symbols correctly
+        // This method is kept for compatibility with the win checking logic
+        this.updateCurrentGrid();
     }
 
     checkWins() {
@@ -379,17 +414,22 @@ class ModernSlotMachine {
     }
 
     highlightWinningCells(cellIds) {
-        const cells = document.querySelectorAll('.grid-cell');
+        const reels = document.querySelectorAll('.reel');
         
-        cells.forEach(cell => {
-            cell.classList.remove('win');
+        // First remove all win highlights
+        document.querySelectorAll('.reel-symbol.win').forEach(symbol => {
+            symbol.classList.remove('win');
         });
         
         for (const cellId of cellIds) {
             const [row, col] = cellId.split('-').map(Number);
-            const cell = document.querySelector(`.grid-cell[data-row="${row}"][data-col="${col}"]`);
-            if (cell) {
-                cell.classList.add('win');
+            const reel = reels[col];
+            // Get the symbol at the visible position
+            const symbolIndex = 8 + row; // Middle of the reel strip
+            const symbolElement = reel.children[symbolIndex];
+            
+            if (symbolElement) {
+                symbolElement.classList.add('win');
             }
         }
     }
@@ -631,8 +671,9 @@ class ModernSlotMachine {
         document.getElementById('lastWin').textContent = this.lastWin.toLocaleString();
         document.getElementById('betAmount').textContent = this.bet.toLocaleString();
         document.getElementById('spinPrice').textContent = this.totalBet.toLocaleString();
+        document.getElementById('spinPriceBig').textContent = this.totalBet.toLocaleString();
         
-        const spinBtn = document.getElementById('spinBtn');
+        const spinBtn = document.getElementById('spinBtnBig');
         spinBtn.disabled = this.isSpinning || (this.balance < this.totalBet && this.freeSpins <= 0);
     }
 
@@ -722,7 +763,12 @@ class ModernSlotMachine {
 
     setupEventListeners() {
         // Spin button
-        document.getElementById('spinBtn').addEventListener('click', () => {
+        document.getElementById('spinBtnBig').addEventListener('click', () => {
+            this.startSpin();
+        });
+        
+        // Lever pull
+        document.getElementById('leverContainer').addEventListener('click', () => {
             this.startSpin();
         });
         

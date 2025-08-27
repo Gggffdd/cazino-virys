@@ -20,7 +20,7 @@
                 <span class="logo-text">NEON<span>SLOT</span></span>
             </div>
             <div class="progress-bar">
-                <div class="progress"></div>
+                <div class="progress" id="preloaderProgress"></div>
             </div>
             <div class="loading-text">Loading...</div>
         </div>
@@ -356,13 +356,27 @@
     </div>
 
     <!-- Audio Elements -->
-    <audio id="spinSound" src="https://assets.mixkit.co/sfx/preview/mixkit-slot-machine-spin-1080.mp3" preload="auto"></audio>
-    <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
-    <audio id="bigWinSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-extra-bonus-2006.mp3" preload="auto"></audio>
-    <audio id="reelSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" preload="auto"></audio>
-    <audio id="bonusSound" src="https://assets.mixkit.co/sfx/preview/mixkit-extra-bonus-in-a-video-game-2040.mp3" preload="auto"></audio>
-    <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" preload="auto"></audio>
-    <audio id="leverSound" src="https://assets.mixkit.co/sfx/preview/mixkit-machine-lever-pull-1000.mp3" preload="auto"></audio>
+    <audio id="spinSound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-slot-machine-spin-1080.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="winSound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="bigWinSound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-extra-bonus-2006.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="reelSound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="bonusSound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-extra-bonus-in-a-video-game-2040.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="clickSound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="leverSound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-machine-lever-pull-1000.mp3" type="audio/mpeg">
+    </audio>
 
     <script src="script.js"></script>
     <script src="bg-particles.js"></script>

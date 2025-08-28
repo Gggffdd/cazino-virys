@@ -42,7 +42,7 @@ class ModernSlotMachine {
             '₿': [0, 0, 12, 30, 60],
             '👑': [0, 0, 10, 25, 50],
             '7️⃣': [0, 0, 8, 20, 40],
-            '❤️': [0, 极速0, 6, 15, 30],
+            '❤️': [0, 0, 6, 15, 30],
             '⭐': [0, 0, 5, 12, 25],
             '🔔': [0, 0, 4, 10, 20]
         };
@@ -154,14 +154,14 @@ class ModernSlotMachine {
             // Horizontal lines
             [[0,0], [0,1], [0,2], [0,3], [0,4]],
             [[1,0], [1,1], [1,2], [1,3], [1,4]],
-            [[2,0], [2,1], [极速2,2], [2,3], [2,4]],
+            [[2,0], [2,1], [2,2], [2,3], [2,4]],
             [[3,0], [3,1], [3,2], [3,3], [3,4]],
             
             // Diagonals
             [[0,0], [1,1], [2,2], [3,3], [3,4]],
             [[3,0], [2,1], [1,2], [0,3], [0,4]],
             [[0,0], [1,1], [2,2], [2,3], [3,4]],
-            [[3,0], [2,极速1], [1,2], [1,3], [0,4]],
+            [[3,0], [2,1], [1,2], [1,3], [0,4]],
             
             // V patterns
             [[0,0], [1,0], [2,0], [1,1], [0,2]],
@@ -178,8 +178,8 @@ class ModernSlotMachine {
             // M patterns
             [[0,0], [1,1], [0,2], [1,3], [0,4]],
             [[3,0], [2,1], [3,2], [2,3], [3,4]],
-            [[0,0], [0,1], [1,2], [0,3], [极速0,4]],
-            [[3,0], [3,1], [2,2], [极速3,3], [3,4]]
+            [[0,0], [0,1], [1,2], [0,3], [0,4]],
+            [[3,0], [3,1], [2,2], [3,3], [3,4]]
         ];
     }
 
@@ -239,7 +239,7 @@ class ModernSlotMachine {
         if (this.autoSpin && (this.autoSpinsCount > 0 || this.autoSpinsCount === -1)) {
             if (this.autoSpinsCount > 0) this.autoSpinsCount--;
             
-            if (this.balance >= this.total极速Bet || this.freeSpins > 0) {
+            if (this.balance >= this.totalBet || this.freeSpins > 0) {
                 const delay = this.turboMode ? 100 : 500;
                 setTimeout(() => this.startSpin(), delay);
             } else {
@@ -307,7 +307,7 @@ class ModernSlotMachine {
         
         for (let row = 0; row < 4; row++) {
             this.currentGrid[row] = [];
-            for (let col = 0; col < 5极速; col++) {
+            for (let col = 0; col < 5; col++) {
                 const reel = reels[col];
                 // Get the symbol at the visible position
                 const symbolIndex = 8 + row;
@@ -508,7 +508,7 @@ class ModernSlotMachine {
     }
 
     createConfetti() {
-        const container = document.getElementById('win极速Particles');
+        const container = document.getElementById('winParticles');
         container.innerHTML = '';
         
         const colors = ['#ff2d95', '#00f3ff', '#c96dff', '#00ff9d', '#ffd700'];
@@ -605,7 +605,7 @@ class ModernSlotMachine {
         }
     }
 
-    setMax极速Bet() {
+    setMaxBet() {
         if (this.isSpinning) return;
         
         this.bet = 1000;
@@ -629,7 +629,7 @@ class ModernSlotMachine {
         if (this.autoSpin) {
             autoBtn.classList.add('active');
             autoText.textContent = 'STOP';
-            this.autoSpins极速Count = -1; // Infinite
+            this.autoSpinsCount = -1; // Infinite
         } else {
             autoBtn.classList.remove('active');
             autoText.textContent = 'AUTO';
@@ -668,7 +668,7 @@ class ModernSlotMachine {
         const soundBtn = document.getElementById('soundBtn');
         
         if (this.soundEnabled) {
-            soundBtn.innerHTML = '<极速i class="fas fa-volume-up"></i>';
+            soundBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
         } else {
             soundBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
         }
